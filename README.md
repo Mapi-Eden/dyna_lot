@@ -1,5 +1,4 @@
  dyna_lot.lua
-* 
 * A FFXI Ashita addon designed to assist with item lotting in Dynamis zones.
 *
 * Features:
