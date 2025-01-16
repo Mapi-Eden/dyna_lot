@@ -1,49 +1,46 @@
 --[[
 * dyna_lot.lua
-* 
-* A FFXI Ashita addon designed to assist with item lotting in Dynamis zones.
+* Handles Dynamis lot management and announcements for FFXI
 *
-* Features:
-* - Tracks and announces time extensions in Dynamis
-* - Monitors and announces item drops with relevant job information
-* - GUI interface for managing drops and sending lot announcements
-* - Configurable party/shout chat announcements
-* - Timer integration for tracking lot windows
-* - Currency drop tracking (hundos)
+* @addon dyna_lot
+* @version 1.0
+* @author Unknown
+* @repo Unknown
 *
-* Configuration Options:
-* - Time Extension announcements toggle
-* - Hundo drop announcements toggle
-* - Inside party announcements toggle 
-* - Outside party (shout) announcements toggle
-* - Auto-announce settings
-* - Linkshell announcements toggle
-* - Linkshell2 announcements toggle
+* @event incoming_packet
+* Processes various packet types:
+* - 0x029: Action Message Packet (Dynamis time extensions)
+* - 0x0D2: Item Drop Packet (Treasure pool additions)
+* - 0x0D3: Item Lot/Drop Packet (Lot results and item claims)
+*
+* @event render
+* Renders the addon's GUI windows:
+* - Main Treasure Log window with drop listings
+* - Options window for configuration settings
+*
+* @event unload
+* Saves configuration settings when addon is unloaded
+*
+* @features
+* - Tracks and announces Dynamis time extensions
+* - Monitors treasure pool items and their job requirements
+* - Creates timers for dropped items
+* - Announces items to party/linkshell channels
+* - Configurable announcement options
+* - GUI interface for item management
+*
+* @configuration
+* Settings stored in settings/dyna_lot.json:
+* - discord: Discord integration toggle
+* - say_hundo: Announce 100 piece drops
+* - outside_party: Enable shout announcements
+* - inside_party: Enable party announcements
+* - say_te: Announce time extensions
+* - currency: Currency tracking
+* - linkshell: Enable linkshell announcements
+* - linkshell2: Enable linkshell2 announcements
+--]]
 
-*
-
-*
-* GUI Features:
-* - Drop list with job/slot information
-* - Quick lot announcement buttons (75/70/65/Free)
-* - Timer controls for drop windows
-* - Configuration menu
-
-*
-* Dependencies:
-* - settings
-* - common
-* - ffxi.targets
-* - timer
-* - imguidef
-* - functions
-* - stringex
-* - ffxi.enums
-* - dyna_items
-* - dyna_timers
-* - chat
-
-]]--
 _addon.author = 'Mapi';
 _addon.name = 'VG Lotting Helper';
 _addon.version = "2.5.6"
@@ -80,7 +77,8 @@ local default_settings = {
 	export = true,
 	linkshell = false,
 	linkshell2 = false,
-	show_options = false
+	show_options = false,
+	use_timers = false
 
 }
 config = default_settings
@@ -111,7 +109,8 @@ local options ={
 	['var_export']                = { nil, ImGuiVar_BOOLCPP },
 	['var_ls']                = { nil, ImGuiVar_BOOLCPP },
 	['var_ls2']                = { nil, ImGuiVar_BOOLCPP },
-	['show_options']                = { nil, ImGuiVar_BOOLCPP }}
+	['show_options']                = { nil, ImGuiVar_BOOLCPP },
+	['use_timers']				= { nil, ImGuiVar_BOOLCPP }}
 
 function lprint(msg)
 	local timestamp = os.date(string.format('\31\%c[%s]\30\01 ', config.color, config.format));
@@ -155,6 +154,7 @@ ashita.register_event('load', function()
 	imgui.SetVarValue(options['var_export'][1],config.export)
 	imgui.SetVarValue(options['var_ls'][1],config.linkshell)
 	imgui.SetVarValue(options['var_ls2'][1],config.linkshell2)
+	imgui.SetVarValue(options['use_timers'][1],config.use_timers)
 	imgui.SetVarValue(options['show_options'][1],false)
 	config.show_options = false
 end);
@@ -212,6 +212,7 @@ ashita.register_event('command', function(command, ntype)
 	return false
 end);
 
+
 ashita.register_event('incoming_packet', function(id, size, packet, packet_modified, blocked)
 	local playerEntity = GetPlayerEntity()
 	local area = AshitaCore:GetResourceManager():GetString("areas",AshitaCore:GetDataManager():GetParty():GetMemberZone(0))
@@ -221,9 +222,7 @@ ashita.register_event('incoming_packet', function(id, size, packet, packet_modif
 		return false
 	end
 
-	--////////////////////////////////////////////////////////////////
 	--// Action Message Packet
-	--//////////////////////////////////////////////////////////////
 	if (id == 0x029) then --Action Message Packet
 		if (playerEntity == nil or in_dyna == false) then
 			return false
@@ -240,8 +239,10 @@ ashita.register_event('incoming_packet', function(id, size, packet, packet_modif
 		--Dynamis Time Extended
 		if(pack_data.Message == 448 ) then
 			WriteToLog(string.format("Time Extension: +%i minutes",pack_data.Param_1))
-			ext_msg = string.format("/timers extend Dyna %im",tonumber(pack_data.Param_1))
-			AshitaCore:GetChatManager():QueueCommand(ext_msg, 1);
+			if(config.use_timers == true)then
+				ext_msg = string.format("/timers extend Dyna %im",tonumber(pack_data.Param_1))
+				AshitaCore:GetChatManager():QueueCommand(ext_msg, 1);
+			end
 			lprint(config.say_te)
 			if(config.say_te == true and config.inside_party == true)then
 				ext_msg = string.format("Dynamis Time Extended by %s minutes",pack_data.Param_1)
@@ -252,18 +253,21 @@ ashita.register_event('incoming_packet', function(id, size, packet, packet_modif
 		
 
 		if(pack_data.Message == 449) then
-			AshitaCore:GetChatManager():QueueCommand("/timers remove Dyna", 1);
 			lprint(string.format("Dynamis Time Left: %s",tostring(pack_data.Param_1)))
-			AshitaCore:GetChatManager():QueueCommand(string.format("/timers add %sm Dyna",tostring(pack_data.Param_1)), 1);
+			
+			
+			if config.use_timers == true then
+				AshitaCore:GetChatManager():QueueCommand("/timers remove Dyna", 1);	
+				AshitaCore:GetChatManager():QueueCommand(string.format("/timers add %sm Dyna",tostring(pack_data.Param_1)), 1);
+			end
+			
 		end
 		pack_data = nil
 		return false
 	end
 
 
-	--////////////////////////////////////////////////////////////////
 	--// Item Drop Packet
-	--//////////////////////////////////////////////////////////////
 	if (id == 0x0D2) then --Item Dropped Packet
 		if (playerEntity == nil or in_dyna == false) then
 			return false
@@ -288,7 +292,9 @@ ashita.register_event('incoming_packet', function(id, size, packet, packet_modif
 						slot = Get_Item_Slot(treasure.ItemId),
 						job = Check_Job(treasure.ItemId)
 					}
-					AshitaCore:GetChatManager():QueueCommand(string.format('/timers add 5m "%s %s"',treasure.Name[0],Check_Job(treasure.ItemId)),1)
+					if(config.use_timers == true)then
+						AshitaCore:GetChatManager():QueueCommand(string.format('/timers add 5m "%s %s"',treasure.Name[0],Check_Job(treasure.ItemId)),1)
+					end
 					lprint(treasure.Name[0],timer_item.slot)
 					if (config.inside_party == true) then
 						Dyna_Announce(string.format("%s [%s] - %s 75 can Lot <call20>",treasure.Name[0],timer_item.slot, Check_Job(treasure.ItemId))) --Announce to Party and outside party
@@ -339,9 +345,8 @@ ashita.register_event('incoming_packet', function(id, size, packet, packet_modif
 		pack_data = nil
 		return false
 	end
-	--////////////////////////////////////////////////////////////////
+	
 	--// Item Lotted or Dropped from Pool
-	--//////////////////////////////////////////////////////////////
 	if( id == 0x0D3) then --Item Lotted / Dropped Packet
 		if (playerEntity == nil or in_dyna == false) then
 			return false
@@ -432,6 +437,7 @@ ashita.register_event('render', function()
 			end
 			lprint("All timers stopped!!")
 		end
+		imgui.SameLine()
 		if (imgui.Button('Exit')) then
 			AshitaCore:GetChatManager():QueueCommand('/addon unload dyna_lot', 1);
 		end
@@ -504,13 +510,21 @@ ashita.register_event('render', function()
 	imgui.End();
 	end
 	
-
+	--Options Window
 	if(config.show_options == true) then
 		if ((imgui.Begin('Options',1,imgui.bor(32)))) then
 			if(imgui.Button("Close")) then
 				config.show_options = false
 			end
 			imgui.Separator();
+			if(imgui.Checkbox('Use Timers Addon', options['use_timers'][1]))then
+				config.use_timers = imgui.GetVarValue(options['use_timers'][1])
+				if(config.use_timers == true)then
+					lprint(chat.success("Will Use Timers Addon"))
+				else
+					lprint(chat.critical("Will Not Use Timers Addon"))
+				end
+			end
 			if(imgui.Checkbox('Time Extension', options['var_time_ext'][1]))then
 				config.say_te = imgui.GetVarValue(options['var_time_ext'][1])
 				if(config.say_te == true)then
