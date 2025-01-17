@@ -420,28 +420,32 @@ end
 
 function Announce_linkshell(msg)
     local out = string.format("/linkshell %s",msg)
-    ashita.timer.once(1,function ()
+    lprint(out)
+    ashita.timer.once(3,function ()
         AshitaCore:GetChatManager():QueueCommand(out, 1);
     end)
 end
 
 function Announce_linkshell2(msg)
     local out = string.format("/linkshell2 %s",msg)
-    ashita.timer.once(3,function ()
+    lprint(out)
+    ashita.timer.once(5,function ()
         AshitaCore:GetChatManager():QueueCommand(out, 1);
     end)
 end
 
 function Announce_outside(msg)
     local out = string.format("/sh %s",msg)
-    ashita.timer.once(5,function ()
+    lprint(out)
+    ashita.timer.once(7,function ()
         AshitaCore:GetChatManager():QueueCommand(out, 1);
     end)
 end
 
 function Announce_inside(msg)
     local out = string.format("/p %s",msg)
-    ashita.timer.once(7,function ()
+    lprint(out)
+    ashita.timer.once(9,function ()
         AshitaCore:GetChatManager():QueueCommand(out, 1);
     end)
 end

@@ -243,7 +243,6 @@ ashita.register_event('incoming_packet', function(id, size, packet, packet_modif
 				ext_msg = string.format("/timers extend Dyna %im",tonumber(pack_data.Param_1))
 				AshitaCore:GetChatManager():QueueCommand(ext_msg, 1);
 			end
-			lprint(config.say_te)
 			if(config.say_te == true and config.inside_party == true)then
 				ext_msg = string.format("Dynamis Time Extended by %s minutes",pack_data.Param_1)
 				Dyna_Announce(ext_msg)
@@ -566,16 +565,17 @@ ashita.register_event('render', function()
 				end
 			end
 			if(imgui.Checkbox('Linkshell Announce', options['var_ls'][1])) then
-				config.inside_party = Get_Option('var_ls')
-				if(config.inside_party == true)then
+				config.linkshell = Get_Option('var_ls')
+				lprint(config.linkshell)
+				if(config.linkshell == true)then
 					lprint(chat.success("Will Send Auto Announcements to /linkshell"))
 				else
 					lprint(chat.critical("Will Not Send Auto Announcements to /linkshell"))
 				end
 			end
 			if(imgui.Checkbox('Linkshell2 Announce', options['var_ls2'][1])) then
-				config.inside_party = Get_Option('var_ls2')
-				if(config.inside_party == true)then
+				config.linkshell2 = Get_Option('var_ls2')
+				if(config.linkshell2 == true)then
 					lprint(chat.success("Will Send Auto Announcements to /linkshell2"))
 				else
 					lprint(chat.critical("Will Not Send Auto Announcements to /linkshell2"))
