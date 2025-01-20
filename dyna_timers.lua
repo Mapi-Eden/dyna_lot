@@ -47,6 +47,8 @@ function Start_Timer_0 ()
                     Active_Timers[0]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[0]=false
@@ -89,6 +91,8 @@ function Start_Timer_1 ()
                     Active_Timers[1]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[1]=false
@@ -130,6 +134,8 @@ function Start_Timer_2 ()
                     Active_Timers[2]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[2]=false
@@ -171,6 +177,8 @@ function Start_Timer_3 ()
                     Active_Timers[3]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[3]=false
@@ -212,6 +220,8 @@ function Start_Timer_4 ()
                     Active_Timers[4]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[4]=false
@@ -253,6 +263,8 @@ function Start_Timer_5 ()
                     Active_Timers[5]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[5]=false
@@ -295,6 +307,8 @@ function Start_Timer_6 ()
                     Active_Timers[6]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[6]=false
@@ -336,6 +350,8 @@ function Start_Timer_7 ()
                     Active_Timers[7]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[7]=false
@@ -377,6 +393,8 @@ function Start_Timer_8 ()
                     Active_Timers[8]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[8]=false
@@ -418,6 +436,8 @@ function Start_Timer_9 ()
                     Active_Timers[9]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[9]=false
@@ -458,6 +478,8 @@ function Start_Timer_10 ()
                     Active_Timers[10]=false
                 end
             else
+                t_msg = string.format("(%s - [%s] - [%s]) -(High Lotter: %s)",item.Name, item.slot,item.Job,lotter)
+                Dyna_Announce(t_msg)
                 --print(string.format("Timer:%s [Removed]",timer_name))
                 ashita.timer.remove_timer(timer_name)
                 Active_Timers[10]=false
