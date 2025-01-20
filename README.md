@@ -17,3 +17,7 @@
  - Auto-announce settings
  - Linkshell announcements toggle
  - Linkshell2 announcements toggle
+
+Uses the timers addon for Time left in Dynamis, Time Extensions
+and Time left on item drops. 
+https://github.com/enkille/timers
