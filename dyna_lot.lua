@@ -41,9 +41,11 @@
 * - linkshell2: Enable linkshell2 announcements
 --]]
 
+
+--Add Moon Phase to Log
 _addon.author = 'Mapi';
 _addon.name = 'VG Lotting Helper';
-_addon.version = "2.5.6"
+_addon.version = "2.8.5"
 
 require 'settings'
 require 'common'
@@ -78,7 +80,15 @@ local default_settings = {
 	linkshell = false,
 	linkshell2 = false,
 	show_options = false,
-	use_timers = false
+	use_timers = false,
+	lot_msg = {
+		[1] = "75 can Lot",
+		[2] = "70 can Lot",
+		[3] = "65 can Lot",
+		[4] = "Free Lot"
+	}
+	
+
 
 }
 config = default_settings
@@ -292,11 +302,11 @@ ashita.register_event('incoming_packet', function(id, size, packet, packet_modif
 						job = Check_Job(treasure.ItemId)
 					}
 					if(config.use_timers == true)then
-						AshitaCore:GetChatManager():QueueCommand(string.format('/timers add 5m "%s %s"',treasure.Name[0],Check_Job(treasure.ItemId)),1)
+						AshitaCore:GetChatManager():QueueCommand(string.format('/timers add 5m "[%i]%s %s"',pack_data.Index,treasure.Name[0],Check_Job(treasure.ItemId)),1)
 					end
 					lprint(treasure.Name[0],timer_item.slot)
 					if (config.inside_party == true) then
-						Dyna_Announce(string.format("%s [%s] - %s 75 can Lot <call20>",treasure.Name[0],timer_item.slot, Check_Job(treasure.ItemId))) --Announce to Party and outside party
+						Dyna_Announce(string.format("%s [%s] - %s %s",treasure.Name[0],timer_item.slot, Check_Job(treasure.ItemId),config.lot_msg[1])) --Announce to Party and outside party
 					end
 					--Make_Timer(pack_data.Index)
 					

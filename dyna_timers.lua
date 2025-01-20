@@ -32,6 +32,7 @@ function Start_Timer_0 ()
             --print(string.len(item.lotter))
             
             if(string.len(lotter) == 0)then
+                
                 if(Timer_loops[0] ~= 2)then
                     t_msg =  string.format("%s [%s] - %s %s can Lot<call20>",item.Name, item.slot,item.Job,Lot_Order[Timer_loops[0]])
                     Dyna_Announce(t_msg)
