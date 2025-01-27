@@ -256,10 +256,7 @@ ashita.register_event('incoming_packet', function(id, size, packet, packet_modif
 			Target_Index = struct.unpack('H', packet,0x16 ),
 			Message = struct.unpack('H', packet,0x18 +1)
 		}
-		--Readies Action on Target
-		if(pack_data.Message == 326 or pack_data.Message == 100 ) then
-			print(string.format("readies: %s %s",pack_data.Param_1,pack_data.Param_2))
-		end
+
 		--Dynamis Time Extended
 		if(pack_data.Message == 448 ) then
 			WriteToLog(string.format("Time Extension: +%i minutes",pack_data.Param_1))
@@ -615,13 +612,7 @@ ashita.register_event('render', function()
 	
 end);
 
-ashita.register_event('incoming_text', function(mode, message, modifiedmode, modifiedmessage, blocked)
-    if(string.contains(message," uses "))then
-		print("Readies")
-		return false
-	end
-    return false;
-end);
+
 
 
 ashita.register_event('unload', function()
