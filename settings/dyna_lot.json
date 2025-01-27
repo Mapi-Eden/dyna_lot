@@ -12,7 +12,7 @@
     "linkshell2": false,
     "lot_msg": [ "75 can Lot", "70 can Lot", "65 can Lot", "Free Lot" ],
     "open_bracket": "[",
-    "outside_party": true,
+    "outside_party": false,
     "say_hundo": true,
     "say_item_drop": false,
     "say_te": false,

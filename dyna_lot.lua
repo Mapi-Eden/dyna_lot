@@ -44,8 +44,8 @@
 
 --Add Moon Phase to Log
 _addon.author = 'Mapi';
-_addon.name = 'VG Lotting Helper';
-_addon.version = "2.8.5"
+_addon.name = 'Dyna Lotting Helper';
+_addon.version = "2.8.9"
 
 require 'settings'
 require 'common'
@@ -191,6 +191,18 @@ ashita.register_event('command', function(command, ntype)
 		item2 = AshitaCore:GetResourceManager():GetItemByName(n_item,0)
 		lprint(item2.Jobs)]]--
 	end
+	if(cmd == '/dl')then
+		if(args[2] == nil)then
+			lprint("No Sub command")
+			return false
+			else if(args[2] == 'start')then
+				WriteToLog("Dyna Started")
+				AshitaCore:GetChatManager():QueueCommand("/timers add 60m Dyna",1);
+			end
+			
+		end
+	end
+
     if(cmd == '/dyna_lot')then
 		subcmd = args[2]:lower()
 		if(subcmd == nil) then
@@ -216,8 +228,6 @@ ashita.register_event('command', function(command, ntype)
 				config.auto_announce=true
 			end
 		end
-	elseif (cmd == "/test") then
-		lprint(string.format("%s Test %s",chat.symbols.unicode.BlackStar,chat.symbols.unicode.BlackStar))
 	end
 	return false
 end);
@@ -246,6 +256,10 @@ ashita.register_event('incoming_packet', function(id, size, packet, packet_modif
 			Target_Index = struct.unpack('H', packet,0x16 ),
 			Message = struct.unpack('H', packet,0x18 +1)
 		}
+		--Readies Action on Target
+		if(pack_data.Message == 326 or pack_data.Message == 100 ) then
+			print(string.format("readies: %s %s",pack_data.Param_1,pack_data.Param_2))
+		end
 		--Dynamis Time Extended
 		if(pack_data.Message == 448 ) then
 			WriteToLog(string.format("Time Extension: +%i minutes",pack_data.Param_1))
@@ -601,7 +615,13 @@ ashita.register_event('render', function()
 	
 end);
 
-
+ashita.register_event('incoming_text', function(mode, message, modifiedmode, modifiedmessage, blocked)
+    if(string.contains(message," uses "))then
+		print("Readies")
+		return false
+	end
+    return false;
+end);
 
 
 ashita.register_event('unload', function()
